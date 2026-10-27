@@ -1,4 +1,4 @@
-// Prepare audio during a real click so a later victory can speak on mobile.
+// Try music on opening; resume from a real gesture when autoplay is blocked.
 export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
   let enabled = true, context, buffer, loading, voice, generation = 0;
   let musicEnabled = true, musicBuffer, musicLoading, musicSource, musicGain, musicOffset = 0, musicStarted = 0;
@@ -20,7 +20,8 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
       pauseMusic(); onMusicStatus(hidden ? 'paused' : 'muted'); return;
     }
     if (!started) { onMusicStatus('waiting'); return; }
-    if (!musicBuffer || context?.state !== 'running') return;
+    if (context?.state !== 'running') { onMusicStatus('blocked'); return; }
+    if (!musicBuffer) { onMusicStatus('loading'); return; }
     if (!musicSource) {
       musicGain ||= context.createGain(); musicGain.disconnect(); musicGain.connect(context.destination);
       musicGain.gain.value = 0; musicVolume(Boolean(voice));
@@ -33,7 +34,7 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
     if (!enabled || !musicEnabled || !context) return;
     try {
       if (!musicBuffer && !musicLoading) {
-        onMusicStatus('loading');
+        onMusicStatus(context.state === 'running' ? 'loading' : 'blocked');
         musicLoading = fetch(new URL('./assets/audio/neon-lily.mp3', import.meta.url))
           .then(response => { if (!response.ok) throw new Error('Music could not load'); return response.arrayBuffer(); })
           .then(bytes => context.decodeAudioData(bytes)).then(decoded => { musicBuffer = decoded; })
@@ -47,12 +48,13 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) throw new Error('Audio is unavailable');
-      context ||= new AudioContext();
+      if (!context) { context = new AudioContext(); context.onstatechange = syncMusic; }
       started = true;
-      // resume must be invoked before the first await while inside the click.
+      // Invoke resume synchronously: subsequent taps can unlock a blocked context.
       const resumed = context.resume();
-      // Music loads independently, so the board and victory voice never wait for it.
-      void resumed.then(() => prepareMusic()).catch(() => onMusicStatus('paused'));
+      // Load even while resume is waiting for permission, so a tap can start promptly.
+      void prepareMusic(); syncMusic();
+      void resumed.then(syncMusic).catch(() => onMusicStatus(hidden ? 'paused' : 'blocked'));
       if (!buffer && !loading) {
         loading = fetch(new URL('./assets/audio/victory-voice.mp3', import.meta.url))
           .then(response => { if (!response.ok) throw new Error('Voice could not load'); return response.arrayBuffer(); })
@@ -64,6 +66,11 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
     } catch { onStatus('unavailable'); }
   }
   function stop() { generation++; if (voice) { voice.stop(); voice = null; } musicVolume(); }
+  function startOnOpen() {
+    started = true;
+    if (enabled && musicEnabled && !hidden) void prime();
+    else syncMusic();
+  }
   function setEnabled(value) {
     enabled = Boolean(value);
     try { localStorage.setItem('apepe-sound-v1', enabled ? 'on' : 'off'); } catch { /* Optional preference. */ }
@@ -80,7 +87,7 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
   function setHidden(value) {
     hidden = Boolean(value);
     if (hidden) { stop(); syncMusic(); if (context) void context.suspend().catch(() => {}); }
-    else if (started && enabled && context) void context.resume().then(syncMusic).catch(() => onMusicStatus('paused'));
+    else if (started && enabled) void prime();
   }
   function cue(kind) {
     if (!enabled || context?.state !== 'running') return;
@@ -110,5 +117,5 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
     };
     musicVolume(true); source.start(); onStatus('playing');
   }
-  return { prime, cue, playVictory, stop, setEnabled, setMusicEnabled, setHidden, get enabled() { return enabled; }, get musicEnabled() { return musicEnabled; } };
+  return { prime, startOnOpen, cue, playVictory, stop, setEnabled, setMusicEnabled, setHidden, get enabled() { return enabled; }, get musicEnabled() { return musicEnabled; } };
 }

@@ -14,15 +14,19 @@ const sound = createGameSound(status => {
   $('replay-voice').textContent = status === 'playing' ? 'Replay victory voice · Playing' : 'Replay victory voice';
 }, status => {
   document.body.dataset.musicState = status;
-  $('music-button').title = status === 'unavailable' ? 'Music could not load. Toggle music to retry.' : status === 'playing' ? 'Neon Lily · Background music playing' : 'Background music starts when you play';
+  $('music-button').title = status === 'unavailable' ? 'Music could not load. Tap to retry.' : status === 'playing' ? 'Neon Lily · Background music playing' : 'APEPE background soundtrack';
+  $('music-start-prompt').hidden = !['blocked', 'unavailable'].includes(status);
+  $('music-start').textContent = status === 'unavailable' ? 'Retry music' : 'Tap to start music';
+  updateSoundButton();
 });
 function updateSoundButton() {
   $('sound-button').setAttribute('aria-pressed', String(sound.enabled));
   $('sound-button').setAttribute('aria-label', sound.enabled ? 'Sound on. Mute all audio.' : 'Sound off. Turn all audio on.');
   $('sound-label').textContent = sound.enabled ? 'Sound on' : 'Sound off';
   $('music-button').setAttribute('aria-pressed', String(sound.enabled && sound.musicEnabled));
-  $('music-button').setAttribute('aria-label', sound.enabled && sound.musicEnabled ? 'Music on. Turn background music off.' : 'Music off. Turn background music on.');
-  $('music-label').textContent = sound.enabled && sound.musicEnabled ? 'Music on' : 'Music off';
+  const needsTap = ['blocked', 'unavailable'].includes(document.body.dataset.musicState);
+  $('music-button').setAttribute('aria-label', sound.enabled && sound.musicEnabled ? (needsTap ? 'Start background music' : 'Music on. Turn background music off.') : 'Music off. Turn background music on.');
+  $('music-label').textContent = sound.enabled && sound.musicEnabled ? (needsTap ? 'Start music' : 'Music on') : 'Music off';
 }
 
 function readCompleted() {
@@ -297,9 +301,15 @@ $('again-button').addEventListener('click', () => { ui['win-dialog'].close(); st
 $('sound-button').addEventListener('click', () => { sound.setEnabled(!sound.enabled); updateSoundButton(); });
 $('music-button').addEventListener('click', () => {
   if (!sound.enabled) { sound.setMusicEnabled(true); sound.setEnabled(true); }
+  else if (['blocked', 'unavailable'].includes(document.body.dataset.musicState)) void sound.prime();
   else sound.setMusicEnabled(!sound.musicEnabled);
   updateSoundButton();
 });
+$('music-start').addEventListener('click', () => { void sound.prime(); });
+document.addEventListener('click', event => {
+  if (event.target.closest('#sound-button, #music-button, #music-start')) return;
+  if (document.body.dataset.musicState === 'blocked') void sound.prime();
+}, { capture: true });
 $('replay-voice').addEventListener('click', () => {
   if (!sound.enabled) { sound.setEnabled(true); updateSoundButton(); }
   void sound.playVictory();
@@ -343,3 +353,5 @@ $('share-button').addEventListener('click', async () => {
   catch { toast('Copy the address from your browser to share the game.'); }
 });
 updateCollection(); updateSoundButton(); setPhase('idle');
+sound.setHidden(document.hidden);
+sound.startOnOpen();
