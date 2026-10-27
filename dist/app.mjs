@@ -1,4 +1,5 @@
 import { memes } from './memes.mjs';
+import { createGameSound } from './sound.mjs';
 import { shuffled, makePuzzle, swapPieces, countCorrect, isSolved, findHint, formatTime } from './puzzle.mjs';
 
 const $ = id => document.getElementById(id);
@@ -7,6 +8,16 @@ const tileElements = new Map();
 const state = { phase: 'idle', difficulty: 3, size: 3, tiles: [], current: null, selected: null, hint: null, moves: 0, hints: 0, elapsed: 0, preview: 0, stall: 0, round: 0 };
 let deck = [], lastMemeId = null, frame = null, previousTime = null, shuffleTimeout = null, winTimeout = null, toastTimeout = null, drag = null, suppressClickUntil = 0;
 const completed = readCompleted();
+const sound = createGameSound(status => {
+  document.body.dataset.audioState = status;
+  $('voice-status').textContent = status === 'playing' ? 'Victory announcement playing.' : status === 'unavailable' ? 'Voice could not play. Use Replay victory voice to try again.' : '';
+  $('replay-voice').textContent = status === 'playing' ? 'Replay victory voice · Playing' : 'Replay victory voice';
+});
+function updateSoundButton() {
+  $('sound-button').setAttribute('aria-pressed', String(sound.enabled));
+  $('sound-button').setAttribute('aria-label', sound.enabled ? 'Sound on. Turn sound off.' : 'Sound off. Turn sound on.');
+  $('sound-label').textContent = sound.enabled ? 'Sound on' : 'Sound off';
+}
 
 function readCompleted() {
   try {
@@ -14,7 +25,12 @@ function readCompleted() {
     return new Set(Array.isArray(values) ? values.filter(id => memes.some(m => m.id === id)) : []);
   } catch { return new Set(); }
 }
-function updateCollection() { ui['collection-count'].textContent = `${completed.size} / 25 memes solved.`; }
+function updateCollection() {
+  ui['collection-count'].textContent = `${completed.size} / 25 memes solved.`;
+  $('collection-total').textContent = `${completed.size} / 25`;
+  $('collection-progress').setAttribute('aria-valuenow', String(completed.size));
+  $('collection-fill').style.width = `${completed.size / 25 * 100}%`;
+}
 function announce(message) { ui.announcement.textContent = message; }
 function instruct(message, kind = '') { ui.instruction.textContent = message; ui.instruction.className = `instruction${kind ? ` is-${kind}` : ''}`; }
 function toast(message) {
@@ -37,7 +53,7 @@ function setPhase(phase) {
   ui['generate-button'].querySelector('span').textContent = phase === 'loading' ? 'Finding your meme…' : 'Generate meme image';
   for (const button of document.querySelectorAll('[data-size]')) button.disabled = ['loading', 'preview', 'shuffling'].includes(phase);
   for (const tile of tileElements.values()) tile.disabled = phase !== 'playing';
-  const titles = { idle: 'A small mystery awaits', loading: 'Finding a little mischief…', preview: 'Take it all in. Five seconds.', shuffling: 'A little scramble…', playing: 'Find the pieces. Make the meme.', won: 'A little patience. A complete meme.' };
+  const titles = { idle: 'Ready when you are', loading: 'Loading your next mission…', preview: 'Memorize the meme. 5 seconds.', shuffling: 'Shuffling the pieces…', playing: 'Restore the meme', won: 'Mission complete. Meme restored.' };
   ui['phase-title'].textContent = titles[phase];
 }
 
@@ -82,6 +98,7 @@ function tick(now) {
 
 async function startRound() {
   if (state.phase === 'loading') return;
+  sound.stop(); void sound.prime();
   const round = ++state.round;
   stopClock(); clearTimeout(shuffleTimeout); clearTimeout(winTimeout); cancelDrag();
   clearHint(); state.selected = null; state.current = null;
@@ -140,7 +157,7 @@ function positionPieces() {
 function scramble() {
   if (state.phase !== 'preview') return;
   setPhase('shuffling'); state.tiles = makePuzzle(state.size); positionPieces(); updateStats();
-  instruct('A little shuffle…'); const round = state.round;
+  sound.cue('shuffle'); instruct('Shuffling the pieces…'); const round = state.round;
   shuffleTimeout = setTimeout(() => {
     if (round !== state.round || state.phase !== 'shuffling') return;
     setPhase('playing'); state.stall = 0;
@@ -157,6 +174,7 @@ function selectPiece(piece) {
   const position = state.tiles.indexOf(piece);
   if (state.selected === position) { state.selected = null; positionPieces(); return; }
   if (state.selected === null) {
+    sound.cue('select');
     state.selected = position; positionPieces();
     announce(`Piece at row ${Math.floor(position / state.size) + 1}, column ${position % state.size + 1} selected. Choose another piece to swap.`);
   } else swap(state.selected, position);
@@ -164,6 +182,7 @@ function selectPiece(piece) {
 function swap(from, to) {
   if (state.phase !== 'playing' || from === to) return;
   const before = countCorrect(state.tiles);
+  sound.cue('swap');
   state.tiles = swapPieces(state.tiles, from, to); state.moves++; state.selected = null;
   clearHint(); positionPieces(); updateStats();
   if (countCorrect(state.tiles) > before) state.stall = 0;
@@ -244,7 +263,7 @@ function completeRound() {
   completed.add(state.current.id);
   try { localStorage.setItem('apepe-completed-v1', JSON.stringify([...completed])); } catch { /* Progress is optional when storage is unavailable. */ }
   updateCollection();
-  instruct('Meme restored. A little patience goes a long way.');
+  instruct('Mission complete. Your meme is unlocked.');
   ui['win-image'].src = state.current.src; ui['win-image'].alt = `Completed meme: ${state.current.title}`;
   ui['win-summary'].textContent = `${state.current.title} · ${formatTime(state.elapsed)} · ${state.moves} ${state.moves === 1 ? 'swap' : 'swaps'}`;
   ui['download-button'].href = state.current.src; ui['download-button'].download = `apepe-bingx-meme-${state.current.id}.webp`;
@@ -261,6 +280,7 @@ function completeRound() {
       }
     }
     ui['win-dialog'].showModal();
+    void sound.playVictory();
   }, 480);
 }
 
@@ -268,6 +288,12 @@ ui['generate-button'].addEventListener('click', startRound);
 ui['new-button'].addEventListener('click', startRound);
 ui['hint-button'].addEventListener('click', () => showHint());
 $('again-button').addEventListener('click', () => { ui['win-dialog'].close(); startRound(); });
+$('sound-button').addEventListener('click', () => { sound.setEnabled(!sound.enabled); updateSoundButton(); });
+$('replay-voice').addEventListener('click', () => {
+  if (!sound.enabled) { sound.setEnabled(true); updateSoundButton(); }
+  void sound.playVictory();
+});
+ui['win-dialog'].addEventListener('close', () => sound.stop());
 for (const button of document.querySelectorAll('[data-size]')) {
   button.addEventListener('click', () => {
     const size = Number(button.dataset.size); if (size === state.difficulty) return;
@@ -295,14 +321,14 @@ document.addEventListener('keydown', event => {
   if (event.key.toLowerCase() === 'h' && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); showHint(); }
   if (event.key === 'Escape') { state.selected = null; positionPieces(); }
 });
-document.addEventListener('visibilitychange', () => { previousTime = null; if (document.hidden) cancelDrag(); });
+document.addEventListener('visibilitychange', () => { previousTime = null; if (document.hidden) { cancelDrag(); sound.stop(); } });
 window.addEventListener('blur', cancelDrag);
 $('share-button').addEventListener('click', async () => {
-  const share = { title: 'Meme with APEPE', text: 'Keep calm. Find the meme. Play this APEPE × BingX picture puzzle.', url: location.href.split('#')[0] };
+  const share = { title: 'Meme with APEPE', text: '25 memes. One mission. Play the APEPE × BingX puzzle arcade.', url: location.href.split('#')[0] };
   try {
     if (navigator.share) { await navigator.share(share); return; }
   } catch (error) { if (error.name === 'AbortError') return; }
   try { await navigator.clipboard.writeText(share.url); toast('Game link copied. Send a little mischief.'); }
   catch { toast('Copy the address from your browser to share the game.'); }
 });
-updateCollection(); setPhase('idle');
+updateCollection(); updateSoundButton(); setPhase('idle');
