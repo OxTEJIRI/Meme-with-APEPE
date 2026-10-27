@@ -93,7 +93,11 @@ function tick(now) {
   const paused = document.hidden || !!document.querySelector('dialog[open]');
   if (!paused && state.phase === 'preview') {
     state.preview += delta;
-    ui['countdown-number'].textContent = String(Math.max(1, Math.ceil((5000 - state.preview) / 1000)));
+    const count = String(Math.max(1, Math.ceil((5000 - state.preview) / 1000)));
+    if (ui['countdown-number'].textContent !== count) {
+      ui['countdown-number'].textContent = count;
+      sound.cue('countdown');
+    }
     ui['preview-progress'].style.transform = `scaleX(${Math.max(0, 1 - state.preview / 5000)})`;
     if (state.preview >= 5000) scramble();
   } else if (!paused && state.phase === 'playing') {
@@ -127,6 +131,7 @@ async function startRound() {
     ui['mascot-note'].textContent = 'A calm mind finds the pieces.';
     buildBoard(); setPhase('preview'); updateStats();
     ui['countdown-number'].textContent = '5'; ui['preview-progress'].style.transform = 'scaleX(1)';
+    sound.cue('countdown');
     instruct('Remember the details. The pieces will shuffle in 5 seconds.');
     announce(`${meme.title}. Study the complete meme for five seconds. The puzzle will then shuffle.`);
     startClock();
@@ -167,7 +172,7 @@ function positionPieces() {
 function scramble() {
   if (state.phase !== 'preview') return;
   setPhase('shuffling'); state.tiles = makePuzzle(state.size); positionPieces(); updateStats();
-  sound.cue('shuffle'); instruct('Shuffling the pieces…'); const round = state.round;
+  sound.cue('go'); instruct('Shuffling the pieces…'); const round = state.round;
   shuffleTimeout = setTimeout(() => {
     if (round !== state.round || state.phase !== 'shuffling') return;
     setPhase('playing'); state.stall = 0;
@@ -182,7 +187,7 @@ function updateStats() {
 function selectPiece(piece) {
   if (state.phase !== 'playing') return;
   const position = state.tiles.indexOf(piece);
-  if (state.selected === position) { state.selected = null; positionPieces(); return; }
+  if (state.selected === position) { sound.cue('select'); state.selected = null; positionPieces(); return; }
   if (state.selected === null) {
     sound.cue('select');
     state.selected = position; positionPieces();
@@ -310,6 +315,13 @@ document.addEventListener('click', event => {
   if (event.target.closest('#sound-button, #music-button, #music-start')) return;
   if (document.body.dataset.musicState === 'blocked') void sound.prime();
 }, { capture: true });
+// Delegation covers current and future controls, including keyboard activation.
+// Puzzle pieces have their own selection/swap sounds, so they are not doubled.
+document.addEventListener('click', event => {
+  const control = event.target.closest('button, a[href]');
+  if (!control || control.disabled || control.classList.contains('tile')) return;
+  sound.cue('button');
+});
 $('replay-voice').addEventListener('click', () => {
   if (!sound.enabled) { sound.setEnabled(true); updateSoundButton(); }
   void sound.playVictory();

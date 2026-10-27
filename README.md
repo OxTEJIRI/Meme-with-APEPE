@@ -10,6 +10,8 @@ After 30 seconds without progress, one piece glows gold, its destination glows b
 
 The victory slogan plays in a prerecorded deep synthetic voice. The sound toggle controls the voice and subtle puzzle effects; the victory dialog also has a replay button. Audio is prepared on the player's first game click and delivered as an 80 KB MP3, with no speech service called during play. Voice source and processing details are in `dist/assets/audio/CREDITS.md`.
 
+The five-second preview has a race-style beep on each visible number, followed by a higher, longer “go” tone when the board scatters. The beeps follow the visible timer and pause with it when help or a guide is open. Every enabled button/action link has a short click sound; puzzle tiles retain distinct selection and swap effects without doubling the clicks. Keyboard activation uses the same sounds. The master sound toggle mutes and cancels effects, and music can still be switched off separately.
+
 An original 48-second electronic soundtrack, **Neon Lily**, tries to start as soon as the game opens and loops across rounds. If browser autoplay rules require an interaction, the welcome screen shows **Tap to start music**; a tap anywhere else also starts it without generating a puzzle. The track preloads while autoplay is blocked. A separate music toggle lets players keep the victory voice and effects while turning off the soundtrack; the master sound toggle mutes everything. Saved mute choices are respected. Music softens under the victory announcement and pauses while the page is hidden. The 673 KB track is served by Vercel and requires no music service during play.
 
 ## Run locally

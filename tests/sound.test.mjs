@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { createGameSound } from '../dist/sound.mjs';
 
 function audioEnvironment(t, deferredMusic = false, autoplayBlocked = false) {
-  const sources = [], gains = [], storage = new Map();
+  const sources = [], gains = [], oscillators = [], storage = new Map();
   const requests = [], pendingResumes = [];
   let gestureAllowed = !autoplayBlocked;
   let releaseMusic;
@@ -19,12 +19,16 @@ function audioEnvironment(t, deferredMusic = false, autoplayBlocked = false) {
     async suspend() { this.state = 'suspended'; }
     async decodeAudioData(bytes) { return { duration: new Uint8Array(bytes)[0] === 2 ? 48 : 4 }; }
     createGain() {
-      const gain = { gain: { value: 0, targets: [], cancelScheduledValues() {}, setTargetAtTime(value) { this.targets.push(value); } }, connect() { return this; }, disconnect() {} };
+      const gain = { gain: { value: 0, targets: [], cancelScheduledValues() {}, setTargetAtTime(value) { this.targets.push(value); }, setValueAtTime() {}, linearRampToValueAtTime() {}, exponentialRampToValueAtTime() {} }, connect() { return this; }, disconnect() {} };
       gains.push(gain); return gain;
     }
     createBufferSource() {
       const source = { connect() { return this; }, disconnect() {}, start(when, offset = 0) { this.offset = offset; this.started = true; }, stop() { this.stopped = true; } };
       sources.push(source); return source;
+    }
+    createOscillator() {
+      const oscillator = { frequency: { setValueAtTime(value) { this.value = value; } }, connect() { return this; }, disconnect() {}, start(when) { this.startAt = when; }, stop(when) { if (when === undefined) this.cancelled = true; else this.stopAt = when; } };
+      oscillators.push(oscillator); return oscillator;
     }
   }
   const contextInstances = [];
@@ -32,7 +36,7 @@ function audioEnvironment(t, deferredMusic = false, autoplayBlocked = false) {
   globalThis.localStorage = { getItem: key => storage.get(key), setItem: (key,value) => storage.set(key,value) };
   t.mock.method(globalThis, 'fetch', async url => { requests.push(String(url)); return { ok: true, arrayBuffer: () => String(url).includes('neon-lily') ? musicBytes : Promise.resolve(new Uint8Array([1]).buffer) }; });
   t.after(() => { delete globalThis.window; delete globalThis.localStorage; });
-  return { sources, gains, storage, contextInstances, requests, releaseMusic, allowGesture: () => { gestureAllowed = true; }, settle: () => new Promise(resolve => setImmediate(resolve)) };
+  return { sources, gains, oscillators, storage, contextInstances, requests, releaseMusic, allowGesture: () => { gestureAllowed = true; }, settle: () => new Promise(resolve => setImmediate(resolve)) };
 }
 
 test('opening the game starts music automatically when the browser allows it', async t => {
@@ -117,4 +121,47 @@ test('hidden pages pause the soundtrack and resume at the saved position', async
   sound.setHidden(false); await env.settle();
   assert.equal(env.sources.at(-1).offset, 9);
   assert.equal(env.contextInstances[0].state, 'running');
+});
+
+test('race countdown has five short matching beeps and a higher, longer go tone', async t => {
+  const env = audioEnvironment(t);
+  const sound = createGameSound();
+  await sound.prime();
+  for (let second = 0; second < 5; second++) {
+    env.contextInstances[0].currentTime = second;
+    sound.cue('countdown');
+  }
+  env.contextInstances[0].currentTime = 5; sound.cue('go');
+  assert.equal(env.oscillators.length, 6);
+  const beeps = env.oscillators.slice(0, 5), go = env.oscillators[5];
+  assert.equal(new Set(beeps.map(beep => beep.frequency.value)).size, 1);
+  assert.deepEqual(beeps.map(beep => beep.startAt), [0,1,2,3,4]);
+  assert.ok(go.frequency.value > beeps[0].frequency.value);
+  assert.ok(go.stopAt - go.startAt > 2 * (beeps[0].stopAt - beeps[0].startAt));
+});
+
+test('button clicks work before playing a puzzle and independently of the music toggle', async t => {
+  const env = audioEnvironment(t);
+  env.storage.set('apepe-music-v1', 'off');
+  const sound = createGameSound();
+  sound.cue('button'); await env.settle();
+  assert.equal(env.oscillators.length, 1);
+  assert.equal(env.sources.filter(source => source.loop).length, 0);
+  assert.ok(env.oscillators[0].stopAt - env.oscillators[0].startAt < .1);
+});
+
+test('master mute and hidden pages cancel active effects and suppress further beeps', async t => {
+  const env = audioEnvironment(t);
+  const sound = createGameSound();
+  await sound.prime(); sound.cue('go');
+  sound.setEnabled(false);
+  assert.ok(env.oscillators[0].cancelled);
+  sound.cue('button'); sound.cue('countdown');
+  assert.equal(env.oscillators.length, 1);
+  sound.setEnabled(true); await env.settle(); sound.cue('button');
+  assert.equal(env.oscillators.length, 2);
+  sound.setHidden(true);
+  assert.ok(env.oscillators[1].cancelled);
+  sound.cue('go');
+  assert.equal(env.oscillators.length, 2);
 });

@@ -3,6 +3,7 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
   let enabled = true, context, buffer, loading, voice, generation = 0;
   let musicEnabled = true, musicBuffer, musicLoading, musicSource, musicGain, musicOffset = 0, musicStarted = 0;
   let started = false, hidden = false;
+  const effects = new Set();
   try { enabled = localStorage.getItem('apepe-sound-v1') !== 'off'; } catch { /* Optional preference. */ }
   try { musicEnabled = localStorage.getItem('apepe-music-v1') !== 'off'; } catch { /* Optional preference. */ }
   function musicVolume(duck = false) {
@@ -66,6 +67,10 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
     } catch { onStatus('unavailable'); }
   }
   function stop() { generation++; if (voice) { voice.stop(); voice = null; } musicVolume(); }
+  function stopEffects() {
+    for (const effect of effects) { effect.oscillator.stop(); effect.oscillator.disconnect(); effect.gain.disconnect(); }
+    effects.clear();
+  }
   function startOnOpen() {
     started = true;
     if (enabled && musicEnabled && !hidden) void prime();
@@ -74,7 +79,7 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
   function setEnabled(value) {
     enabled = Boolean(value);
     try { localStorage.setItem('apepe-sound-v1', enabled ? 'on' : 'off'); } catch { /* Optional preference. */ }
-    if (!enabled) { stop(); syncMusic(); onStatus('muted'); }
+    if (!enabled) { stop(); stopEffects(); syncMusic(); onStatus('muted'); }
     else void prime();
     return enabled;
   }
@@ -86,20 +91,35 @@ export function createGameSound(onStatus = () => {}, onMusicStatus = () => {}) {
   }
   function setHidden(value) {
     hidden = Boolean(value);
-    if (hidden) { stop(); syncMusic(); if (context) void context.suspend().catch(() => {}); }
+    if (hidden) { stop(); stopEffects(); syncMusic(); if (context) void context.suspend().catch(() => {}); }
     else if (started && enabled) void prime();
   }
   function cue(kind) {
-    if (!enabled || context?.state !== 'running') return;
-    const frequencies = kind === 'shuffle' ? [180, 270, 360] : kind === 'swap' ? [380, 510] : [480];
-    frequencies.forEach((hz, index) => {
+    if (!enabled || hidden) return;
+    if (!context && kind === 'button') void prime();
+    if (context?.state !== 'running') {
+      // The first button can unlock audio without waiting for either MP3 to load.
+      if (context && kind === 'button') void context.resume().then(() => cue(kind)).catch(() => {});
+      return;
+    }
+    const profile = {
+      button: { notes: [660], wave: 'triangle', volume: .045, duration: .055 },
+      countdown: { notes: [880], wave: 'square', volume: .045, duration: .17 },
+      go: { notes: [1320], wave: 'square', volume: .05, duration: .48 },
+      swap: { notes: [380, 510], wave: 'sine', volume: .025, duration: .09 },
+      select: { notes: [480], wave: 'sine', volume: .025, duration: .09 },
+    }[kind];
+    if (!profile) return;
+    profile.notes.forEach((hz, index) => {
       const oscillator = context.createOscillator(), gain = context.createGain();
       const start = context.currentTime + index * .065;
-      oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(hz, start);
-      gain.gain.setValueAtTime(0, start); gain.gain.linearRampToValueAtTime(.025, start + .008);
-      gain.gain.exponentialRampToValueAtTime(.0001, start + .09);
-      oscillator.connect(gain).connect(context.destination); oscillator.start(start); oscillator.stop(start + .1);
-      oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+      oscillator.type = profile.wave; oscillator.frequency.setValueAtTime(hz, start);
+      gain.gain.setValueAtTime(0, start); gain.gain.linearRampToValueAtTime(profile.volume, start + .006);
+      gain.gain.setValueAtTime(profile.volume, start + profile.duration * .65);
+      gain.gain.exponentialRampToValueAtTime(.0001, start + profile.duration);
+      const effect = { oscillator, gain }; effects.add(effect);
+      oscillator.connect(gain).connect(context.destination); oscillator.start(start); oscillator.stop(start + profile.duration + .01);
+      oscillator.onended = () => { effects.delete(effect); oscillator.disconnect(); gain.disconnect(); };
     });
   }
   async function playVictory() {
