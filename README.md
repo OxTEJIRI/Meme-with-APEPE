@@ -10,6 +10,8 @@ After 30 seconds without progress, one piece glows gold, its destination glows b
 
 The victory slogan plays in a prerecorded deep synthetic voice. The sound toggle controls the voice and subtle puzzle effects; the victory dialog also has a replay button. Audio is prepared on the player's first game click and delivered as an 80 KB MP3, with no speech service called during play. Voice source and processing details are in `dist/assets/audio/CREDITS.md`.
 
+An original 48-second electronic soundtrack, **Neon Lily**, loops across rounds after the first play interaction. A separate music toggle lets players keep the victory voice and effects while turning off the soundtrack; the master sound toggle mutes everything. Music softens under the victory announcement and pauses while the page is hidden. The 673 KB track is served by Vercel and requires no music service during play.
+
 ## Run locally
 
 Requires Node.js 20 or newer. There are no runtime npm dependencies and no installation step.

@@ -12,11 +12,17 @@ const sound = createGameSound(status => {
   document.body.dataset.audioState = status;
   $('voice-status').textContent = status === 'playing' ? 'Victory announcement playing.' : status === 'unavailable' ? 'Voice could not play. Use Replay victory voice to try again.' : '';
   $('replay-voice').textContent = status === 'playing' ? 'Replay victory voice · Playing' : 'Replay victory voice';
+}, status => {
+  document.body.dataset.musicState = status;
+  $('music-button').title = status === 'unavailable' ? 'Music could not load. Toggle music to retry.' : status === 'playing' ? 'Neon Lily · Background music playing' : 'Background music starts when you play';
 });
 function updateSoundButton() {
   $('sound-button').setAttribute('aria-pressed', String(sound.enabled));
-  $('sound-button').setAttribute('aria-label', sound.enabled ? 'Sound on. Turn sound off.' : 'Sound off. Turn sound on.');
+  $('sound-button').setAttribute('aria-label', sound.enabled ? 'Sound on. Mute all audio.' : 'Sound off. Turn all audio on.');
   $('sound-label').textContent = sound.enabled ? 'Sound on' : 'Sound off';
+  $('music-button').setAttribute('aria-pressed', String(sound.enabled && sound.musicEnabled));
+  $('music-button').setAttribute('aria-label', sound.enabled && sound.musicEnabled ? 'Music on. Turn background music off.' : 'Music off. Turn background music on.');
+  $('music-label').textContent = sound.enabled && sound.musicEnabled ? 'Music on' : 'Music off';
 }
 
 function readCompleted() {
@@ -289,6 +295,11 @@ ui['new-button'].addEventListener('click', startRound);
 ui['hint-button'].addEventListener('click', () => showHint());
 $('again-button').addEventListener('click', () => { ui['win-dialog'].close(); startRound(); });
 $('sound-button').addEventListener('click', () => { sound.setEnabled(!sound.enabled); updateSoundButton(); });
+$('music-button').addEventListener('click', () => {
+  if (!sound.enabled) { sound.setMusicEnabled(true); sound.setEnabled(true); }
+  else sound.setMusicEnabled(!sound.musicEnabled);
+  updateSoundButton();
+});
 $('replay-voice').addEventListener('click', () => {
   if (!sound.enabled) { sound.setEnabled(true); updateSoundButton(); }
   void sound.playVictory();
@@ -321,7 +332,7 @@ document.addEventListener('keydown', event => {
   if (event.key.toLowerCase() === 'h' && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); showHint(); }
   if (event.key === 'Escape') { state.selected = null; positionPieces(); }
 });
-document.addEventListener('visibilitychange', () => { previousTime = null; if (document.hidden) { cancelDrag(); sound.stop(); } });
+document.addEventListener('visibilitychange', () => { previousTime = null; sound.setHidden(document.hidden); if (document.hidden) cancelDrag(); });
 window.addEventListener('blur', cancelDrag);
 $('share-button').addEventListener('click', async () => {
   const share = { title: 'Meme with APEPE', text: '25 memes. One mission. Play the APEPE × BingX puzzle arcade.', url: location.href.split('#')[0] };

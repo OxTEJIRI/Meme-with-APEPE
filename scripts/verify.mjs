@@ -5,7 +5,7 @@ import { memes } from '../dist/memes.mjs';
 const base = new URL('../dist/', import.meta.url);
 assert.equal(memes.length, 25);
 assert.equal(new Set(memes.map(m => m.id)).size, 25);
-for (const file of ['index.html', 'styles.css', 'app.mjs', 'sound.mjs', 'puzzle.mjs', 'favicon.png', 'manifest.webmanifest', 'assets/apepe-emblem.webp', 'assets/apepe-icon-180.png', 'assets/apepe-icon-192.png', 'assets/apepe-icon-512.png', 'assets/audio/victory-voice.mp3', 'assets/apepe-pointing.webp']) {
+for (const file of ['index.html', 'styles.css', 'app.mjs', 'sound.mjs', 'puzzle.mjs', 'favicon.png', 'manifest.webmanifest', 'assets/apepe-emblem.webp', 'assets/apepe-icon-180.png', 'assets/apepe-icon-192.png', 'assets/apepe-icon-512.png', 'assets/audio/victory-voice.mp3', 'assets/audio/neon-lily.mp3', 'assets/apepe-pointing.webp']) {
   assert.ok((await stat(new URL(file, base))).size > 0, file);
 }
 for (const meme of memes) {
