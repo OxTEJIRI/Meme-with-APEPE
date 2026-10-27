@@ -1,0 +1,255 @@
+{
+  "imageCount": 25,
+  "images": [
+    {
+      "id": 1,
+      "title": "Let Him Cook",
+      "caption": "LET HIM COOK.",
+      "src": "./assets/memes/01-let-him-cook.664a89bb82.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 284146,
+      "alt": "APEPE and BingX — Let Him Cook. LET HIM COOK."
+    },
+    {
+      "id": 2,
+      "title": "Missed the Moon Exit",
+      "caption": "WEN MOON? MISSED MY EXIT.",
+      "src": "./assets/memes/02-moon-missed-exit.5d1d2bdd16.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 294056,
+      "alt": "APEPE and BingX — Missed the Moon Exit. WEN MOON? MISSED MY EXIT."
+    },
+    {
+      "id": 3,
+      "title": "Touch Grass, Check Charts",
+      "caption": "TOUCH GRASS. CHECK CHARTS.",
+      "src": "./assets/memes/03-touch-grass.9353ba0177.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 339414,
+      "alt": "APEPE and BingX — Touch Grass, Check Charts. TOUCH GRASS. CHECK CHARTS."
+    },
+    {
+      "id": 4,
+      "title": "Calm in the Storm",
+      "caption": "CALM IS A STRATEGY.",
+      "src": "./assets/memes/04-calm-in-the-storm.4bca870db4.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 347438,
+      "alt": "APEPE and BingX — Calm in the Storm. CALM IS A STRATEGY."
+    },
+    {
+      "id": 5,
+      "title": "Emotional Baggage",
+      "caption": "EMOTIONAL BAGGAGE? CHECKED.",
+      "src": "./assets/memes/05-emotional-baggage.f29781d083.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 303852,
+      "alt": "APEPE and BingX — Emotional Baggage. EMOTIONAL BAGGAGE? CHECKED."
+    },
+    {
+      "id": 6,
+      "title": "Museum of Past Panic",
+      "caption": "HISTORICALLY, I PANICKED.",
+      "src": "./assets/memes/06-museum-of-panic.cf9aba2627.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 284198,
+      "alt": "APEPE and BingX — Museum of Past Panic. HISTORICALLY, I PANICKED."
+    },
+    {
+      "id": 7,
+      "title": "One More Chart",
+      "caption": "ONE MORE CHART. THEN BED.",
+      "src": "./assets/memes/07-one-more-chart.b412eaf6c4.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 305738,
+      "alt": "APEPE and BingX — One More Chart. ONE MORE CHART. THEN BED."
+    },
+    {
+      "id": 8,
+      "title": "Fishing for Patience",
+      "caption": "FOMO TOOK THE BAIT.",
+      "src": "./assets/memes/08-fomo-fishing.77acc5809a.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 321740,
+      "alt": "APEPE and BingX — Fishing for Patience. FOMO TOOK THE BAIT."
+    },
+    {
+      "id": 9,
+      "title": "Espresso Yourself",
+      "caption": "LESS PANIC. MORE ESPRESSO.",
+      "src": "./assets/memes/09-espresso-candles.a144e1a07d.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 312918,
+      "alt": "APEPE and BingX — Espresso Yourself. LESS PANIC. MORE ESPRESSO."
+    },
+    {
+      "id": 10,
+      "title": "Loading Patience",
+      "caption": "PATIENCE IS STILL LOADING.",
+      "src": "./assets/memes/10-loading-patience.96c3fdbdfe.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 333110,
+      "alt": "APEPE and BingX — Loading Patience. PATIENCE IS STILL LOADING."
+    },
+    {
+      "id": 11,
+      "title": "Chart Weather Forecast",
+      "caption": "TODAY'S FORECAST: UNBOTHERED.",
+      "src": "./assets/memes/11-chart-weather.4859ede2ba.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 244610,
+      "alt": "APEPE and BingX — Chart Weather Forecast. TODAY'S FORECAST: UNBOTHERED."
+    },
+    {
+      "id": 12,
+      "title": "Laundry Day",
+      "caption": "WASHING OUT THE FOMO.",
+      "src": "./assets/memes/12-laundry-day.bf46bd16bb.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 305926,
+      "alt": "APEPE and BingX — Laundry Day. WASHING OUT THE FOMO."
+    },
+    {
+      "id": 13,
+      "title": "Checkmate, FOMO",
+      "caption": "YOUR MOVE, FOMO.",
+      "src": "./assets/memes/13-chess-with-fomo.1a69b9e45c.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 266886,
+      "alt": "APEPE and BingX — Checkmate, FOMO. YOUR MOVE, FOMO."
+    },
+    {
+      "id": 14,
+      "title": "Rollercoaster Zen",
+      "caption": "VOLATILITY. SAME FACE.",
+      "src": "./assets/memes/14-rollercoaster-zen.c7e9db1f50.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 263550,
+      "alt": "APEPE and BingX — Rollercoaster Zen. VOLATILITY. SAME FACE."
+    },
+    {
+      "id": 15,
+      "title": "Garden of Patience",
+      "caption": "GROW MEMES. PRACTICE PATIENCE.",
+      "src": "./assets/memes/15-zen-garden.af6a84fa3d.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 333170,
+      "alt": "APEPE and BingX — Garden of Patience. GROW MEMES. PRACTICE PATIENCE."
+    },
+    {
+      "id": 16,
+      "title": "One Small Hop",
+      "caption": "ONE SMALL HOP FOR APEPE.",
+      "src": "./assets/memes/16-one-small-step.241aa28dac.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 358678,
+      "alt": "APEPE and BingX — One Small Hop. ONE SMALL HOP FOR APEPE."
+    },
+    {
+      "id": 17,
+      "title": "The FOMO Files",
+      "caption": "THE SUSPECT WAS FOMO.",
+      "src": "./assets/memes/17-fomo-detective.fe734dc458.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 255962,
+      "alt": "APEPE and BingX — The FOMO Files. THE SUSPECT WAS FOMO."
+    },
+    {
+      "id": 18,
+      "title": "Hydration Check",
+      "caption": "CHECK CHARTS. DRINK WATER.",
+      "src": "./assets/memes/18-hydration-check.f91874bb93.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 328916,
+      "alt": "APEPE and BingX — Hydration Check. CHECK CHARTS. DRINK WATER."
+    },
+    {
+      "id": 19,
+      "title": "Meme Masterpiece",
+      "caption": "TRUST THE MEME PROCESS.",
+      "src": "./assets/memes/19-meme-studio.bf3a890549.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 382288,
+      "alt": "APEPE and BingX — Meme Masterpiece. TRUST THE MEME PROCESS."
+    },
+    {
+      "id": 20,
+      "title": "Catch the Meme Wave",
+      "caption": "BIG WAVES. SMALL FROG.",
+      "src": "./assets/memes/20-market-surfing.1391b62c29.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 332598,
+      "alt": "APEPE and BingX — Catch the Meme Wave. BIG WAVES. SMALL FROG."
+    },
+    {
+      "id": 21,
+      "title": "Notification Orchestra",
+      "caption": "MUTE THE NOISE. KEEP THE VIBE.",
+      "src": "./assets/memes/21-notification-orchestra.2fad8db1ce.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 257708,
+      "alt": "APEPE and BingX — Notification Orchestra. MUTE THE NOISE. KEEP THE VIBE."
+    },
+    {
+      "id": 22,
+      "title": "Cosmic Delivery",
+      "caption": "YOUR MEME HAS ARRIVED.",
+      "src": "./assets/memes/22-cosmic-delivery.3970b31128.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 326042,
+      "alt": "APEPE and BingX — Cosmic Delivery. YOUR MEME HAS ARRIVED."
+    },
+    {
+      "id": 23,
+      "title": "Steam Off the FOMO",
+      "caption": "STEAM OFF THE FOMO.",
+      "src": "./assets/memes/23-sauna-of-calm.10ddc8c12c.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 262944,
+      "alt": "APEPE and BingX — Steam Off the FOMO. STEAM OFF THE FOMO."
+    },
+    {
+      "id": 24,
+      "title": "Piece by Piece",
+      "caption": "PIECE BY PIECE. MEME BY MEME.",
+      "src": "./assets/memes/24-puzzle-solved.b84d3228fe.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 300850,
+      "alt": "APEPE and BingX — Piece by Piece. PIECE BY PIECE. MEME BY MEME."
+    },
+    {
+      "id": 25,
+      "title": "Small Frog, Big Universe",
+      "caption": "SMALL FROG. BIG MEME ENERGY.",
+      "src": "./assets/memes/25-small-frog-big-universe.40d7592e2d.webp",
+      "width": 1152,
+      "height": 1152,
+      "bytes": 375014,
+      "alt": "APEPE and BingX — Small Frog, Big Universe. SMALL FROG. BIG MEME ENERGY."
+    }
+  ]
+}

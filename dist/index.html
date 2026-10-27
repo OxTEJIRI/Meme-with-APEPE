@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6edda">
+  <meta name="description" content="A small frog. A scrambled meme. Meet APEPE in a relaxed picture puzzle with 25 original BingX memes, a five-second preview, and a little help when you need it.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Meme with APEPE">
+  <meta property="og:description" content="Keep calm. Find the meme. Play 25 original APEPE × BingX picture puzzles.">
+  <meta property="og:image" content="https://meme-with-apepe-tejiri.heistejiri.chatgpt.site/assets/social-preview.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@0xTEJIRI">
+  <title>Meme with APEPE — Keep calm. Find the meme.</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="preload" as="image" href="./assets/apepe-pointing.webp" type="image/webp">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body data-phase="idle">
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2L12 3Z"/><path d="m20 2 .7 2.3L23 5l-2.3.7L20 8l-.7-2.3L17 5l2.3-.7L20 2Z"/></symbol>
+    <symbol id="i-hint" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4M8.5 14.5a6 6 0 1 1 7 0c-.8.6-1.1 1.5-1.1 2.5H9.6c0-1-.3-1.9-1.1-2.5Z"/><path d="M12 7v3l2 1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 10a8 8 0 1 0-1.4 6.5M20 4v6h-6"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 15V3m-4 4 4-4 4 4M6 12H4v9h16v-9h-2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></symbol>
+  </defs></svg>
+
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="Meme with APEPE home"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Meme with <strong>APEPE</strong></span></a>
+      <nav aria-label="Game links"><button class="text-button" id="help-button" type="button">How to play</button><button class="share-button" id="share-button" type="button" aria-label="Share game"><svg class="icon"><use href="#i-share"/></svg><span>Share game</span></button></nav>
+    </header>
+
+    <main class="puzzle-room">
+      <section class="introduction" aria-labelledby="page-title">
+        <div class="intro-copy"><div class="brand-pair"><span class="mini-leaf" aria-hidden="true"></span> APEPE <span class="times">×</span> <span class="bingx">BingX</span></div>
+          <h1 id="page-title">Small frog.<br>Big puzzle.</h1>
+          <p class="lead">A little memory. A little mischief.<br> One meme waiting to be made whole.</p>
+          <fieldset class="difficulty"><legend>Pick your pace</legend><div class="difficulty-options"><button type="button" data-size="3" aria-pressed="true"><strong>Chill</strong><span>3 × 3</span></button><button type="button" data-size="4" aria-pressed="false"><strong>Challenge</strong><span>4 × 4</span></button></div></fieldset>
+        </div>
+        <div class="mascot-wrap"><p class="mascot-note" id="mascot-note">Your next meme is this way.</p><img class="mascot" src="./assets/apepe-pointing.webp" width="820" height="820" alt="APEPE, a green frog in a brown hooded robe, pointing at the generate button."><span class="ground" aria-hidden="true"></span></div>
+      </section>
+
+      <section class="play-station" aria-label="Meme puzzle">
+        <div class="station-heading"><div class="phase-label"><span id="phase-dot" aria-hidden="true"></span><h2 id="phase-title">A small mystery awaits</h2></div><span class="puzzle-size" id="puzzle-size">3 × 3</span></div>
+        <div class="play-surface">
+          <div class="board-column">
+            <div class="board-shell">
+              <div id="board" class="board" role="group" aria-label="Picture puzzle board">
+                <div id="welcome" class="welcome">
+                  <div class="teaser" aria-hidden="true"><span></span><span><i class="teaser-leaf"></i></span><span></span><span></span><span class="question">?</span><span></span><span></span><span></span><span class="teaser-brand">BingX</span></div>
+                  <p class="welcome-title">What’s your next meme?</p><p class="welcome-copy">25 original scenes. A fresh little challenge.</p>
+                  <div class="welcome-action"><img class="mobile-mascot" src="./assets/apepe-pointing.webp" width="820" height="820" alt="APEPE points to the generate button."><button id="generate-button" class="primary-button" type="button"><svg class="icon"><use href="#i-spark"/></svg><span>Generate meme image</span></button></div>
+                  <span class="welcome-footnote">You’ll get 5 seconds to take it all in.</span>
+                </div>
+                <svg id="hint-path" class="hint-path" viewBox="0 0 100 100" aria-hidden="true" hidden><defs><marker id="hint-arrow" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto"><path d="M0 0 5 2.5 0 5Z" fill="#ffcc65"/></marker></defs><line id="hint-line" stroke="#ffcc65" stroke-width="1.15" stroke-linecap="round" stroke-dasharray="2 1.4" marker-end="url(#hint-arrow)"/></svg>
+                <div id="countdown" class="countdown" aria-hidden="true" hidden><span id="countdown-number">5</span></div>
+                <div id="preview-meter" class="preview-meter" hidden><span id="preview-progress"></span></div>
+              </div>
+            </div>
+            <p id="instruction" class="instruction" role="status">Take your time. The fun is in finding the pieces.</p>
+            <div class="round-stats" id="round-stats" hidden><div><span>Time</span><strong id="time-value">0:00</strong></div><div><span>Swaps</span><strong id="moves-value">0</strong></div><div><span>In place</span><strong id="placed-value">0 / 9</strong></div></div>
+            <div class="board-controls" id="board-controls" hidden><button id="hint-button" class="secondary-button" type="button"><svg class="icon"><use href="#i-hint"/></svg>A little hint<span class="key-hint">H</span></button><button id="new-button" class="text-button" type="button"><svg class="icon"><use href="#i-refresh"/></svg>New meme</button></div>
+          </div>
+          <aside id="side-guide" class="side-guide" aria-label="Original image guide" hidden><span class="guide-label">Your guide</span><button id="guide-button" class="guide-button" type="button" aria-label="Enlarge the original meme"><img id="guide-image" alt="Original meme for reference" width="1152" height="1152"><span><svg class="icon"><use href="#i-expand"/></svg></span></button><p id="meme-title" class="meme-title"></p><p class="guide-note">Tap to take<br> a closer look.</p><div class="calm-note"><span class="mini-leaf" aria-hidden="true"></span><p>No rush.<br>No time limit.</p></div></aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>Small frog. Calm mind. <span id="collection-count">0 / 25 memes solved.</span></span><a href="https://x.com/0xTEJIRI" target="_blank" rel="noopener noreferrer">Made by @0xTEJIRI <span aria-hidden="true">↗</span></a></footer>
+  </div>
+
+  <dialog id="help-dialog" class="help-dialog" aria-labelledby="help-title"><button class="close-button" data-close="help-dialog" type="button" aria-label="Close instructions"><svg class="icon"><use href="#i-close"/></svg></button><span class="dialog-leaf mini-leaf" aria-hidden="true"></span><h2 id="help-title">Make the meme whole.</h2><ol><li><strong>Meet your meme.</strong> Generate a random image and study it for five seconds.</li><li><strong>Let it scramble.</strong> The pieces shuffle when the preview ends.</li><li><strong>Swap any two pieces.</strong> Tap one, then another. Or drag and drop. Pieces can move anywhere.</li><li><strong>Take a peek.</strong> The small original image is always there as your guide.</li><li><strong>Get a little help.</strong> Tap “A little hint” or press H. After 30 seconds without progress, a hint appears automatically. The gold piece belongs in the blue slot.</li></ol><p class="dialog-note">Keyboard: Tab to a piece, Enter or Space to select it, then select another. Arrow keys move between pieces. Escape clears your selection.</p><button class="primary-button" data-close="help-dialog" type="button">Let’s play</button></dialog>
+  <dialog id="guide-dialog" class="guide-dialog" aria-labelledby="guide-title"><div class="dialog-top"><h2 id="guide-title">Your original meme</h2><button class="close-button" data-close="guide-dialog" type="button" aria-label="Close original image"><svg class="icon"><use href="#i-close"/></svg></button></div><img id="large-guide-image" alt="Original meme, shown as a puzzle guide" width="1152" height="1152"></dialog>
+  <dialog id="win-dialog" class="win-dialog" aria-labelledby="win-title"><button class="close-button" data-close="win-dialog" type="button" aria-label="Close completed meme"><svg class="icon"><use href="#i-close"/></svg></button><div id="confetti" class="confetti" aria-hidden="true"></div><span class="win-badge"><svg class="icon"><use href="#i-check"/></svg>Meme restored</span><img id="win-image" alt="Your completed APEPE and BingX meme" width="1152" height="1152"><h2 id="win-title">MEME WITH APEPE.<br>TRADE WITH BingX.</h2><p id="win-summary"></p><div class="win-actions"><button id="again-button" class="primary-button" type="button"><svg class="icon"><use href="#i-spark"/></svg>One more meme</button><a id="download-button" class="secondary-button" download><svg class="icon"><use href="#i-download"/></svg>Save meme</a></div></dialog>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <noscript><p class="noscript">Please enable JavaScript to play the picture puzzle.</p></noscript>
+</body>
+</html>
